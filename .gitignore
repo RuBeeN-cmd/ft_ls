@@ -1,0 +1,4 @@
+objs
+*.o
+ft_ls
+.vscode
