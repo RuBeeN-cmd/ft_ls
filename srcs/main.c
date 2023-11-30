@@ -1,61 +1,155 @@
-#include <stdio.h>
-#include <dirent.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+#include "ft_ls.h"
 
-#define	LONG		0
-#define	RECURSIVE	1
-#define	ALL			2
-#define	REVERSE		3
-#define	TIME		4
 
-int	get_flags(int *argc_ptr, char **argv_ptr[])
+int	parse_no_files(int argc, char *argv[])
 {
-	int flags = 0;
-	while (*argc_ptr && **argv_ptr[0] == '-')
+	int	status = 0;
+	for (int i = 0; i < argc; i++)
 	{
-		for (int j = 0; **argv_ptr[j]; j++)
+		if (argv[i][0])
 		{
-				if (**argv_ptr[j] == 'l')
-					flags |= 1 << LONG;
-				if (**argv_ptr[j] == 'R')
-					flags |= 1 << RECURSIVE;
-				if (**argv_ptr[j] == 'a')
-					flags |= 1 << ALL;
-				if (**argv_ptr[j] == 'r')
-					flags |= 1 << REVERSE;
-				if (**argv_ptr[j] == 't')
-					flags |= 1 << TIME;
+			struct stat	stat_;
+			if (stat(argv[i], &stat_) == -1)
+			{
+				printf("ft_ls: cannot access '%s': %s\n", argv[i], strerror(errno));
+				status = 2;
+				argv[i][0] = 0;
+			}
 		}
-		*argc_ptr = *argc_ptr - 1;
-		*argv_ptr = *argv_ptr + 1;
 	}
-	return (flags);
+	return (status);
 }
 
-void	list_files(int argc, char *argv[])
+void	parse_files(int argc, char *argv[], int flags)
 {
-	if (!argc)
-		return ;
-	DIR *dir;
-	if (!(dir = opendir(*argv)))
-		printf("ft_ls: %s: No such file or directory", *argv);
-	else
+	(void) flags;
+	for (int i = 0; i < argc; i++)
 	{
-		struct dirent	*dirent;
-		while ((dirent = readdir(dir)))
+		if (argv[i][0])
 		{
-			printf("%s\n", dirent->d_name);
+			struct stat	stat_;
+			stat(argv[i], &stat_);
+			if (!S_ISDIR(stat_.st_mode))
+			{
+				printf("file : %s\n", argv[i]);
+				argv[i][0] = 0;
+			}
+			else if (flags & LONG && lstat(argv[i], &stat_) != -1)
+			{
+				printf("symlink : %s\n", argv[i]);
+				argv[i][0] = 0;
+			}
 		}
+	}
+}
+
+t_list	*fill_list(DIR *dir, int flags)
+{
+	t_list	*lst;
+
+	struct dirent	*dirent;
+	if (!(dirent = readdir(dir)))
+		return (NULL);
+	if (dirent->d_name[0] == '.' && !(flags & ALL))
+		return (fill_list(dir, flags));
+	lst = ft_lstnew(dirent);
+	lst->next = fill_list(dir, flags);
+	return (lst);
+}
+
+void	swap(t_list *l1, t_list *l2)
+{
+	void	*tmp = l1->content;
+	l1->content = l2->content;
+	l2->content = tmp;
+}
+
+int	is_less(t_list *l1, t_list *l2, int flags)
+{
+	if (!l1 || !l2)
+		return (1);
+	(void) flags;
+	char	*n1 = ((struct dirent *) l1->content)->d_name;
+	char	*n2 = ((struct dirent *) l2->content)->d_name;
+	int i = 0;
+	while (n1[i] && n1[i] == n2[i])
+		i++;
+	return (n1[i] < n2[i]);
+}
+
+t_list	*get_min(t_list *lst, int flags)
+{
+	if (!lst)
+		return (NULL);
+	t_list	*next_min = get_min(lst->next, flags);
+	if (is_less(lst, next_min, flags))
+		return (lst);
+	return (next_min);
+}
+
+void	sort_list(t_list *lst, int flags)
+{
+	if (!lst)
+		return ;
+	t_list	*min = get_min(lst, flags);
+	swap(lst, min);
+	sort_list(lst->next, flags);
+}
+
+void	show_list(t_list *lst, int flags)
+{
+	(void) flags;
+
+	while (lst)
+	{
+		printf("%s\n", ((struct dirent *) lst->content)->d_name);
+		lst = lst->next;
+	}
+}
+
+void	list_folder_content(char folder_name[], int flags)
+{
+	t_list	*lst;
+	DIR		*dir;
+	if ((dir = opendir(folder_name)))
+	{
+		lst = fill_list(dir, flags);
+		sort_list(lst, flags);
+		show_list(lst, flags);
 		if (closedir(dir) == -1)
 			printf("Closedir error\n");
 	}
-	list_files(argc - 1, argv + 1);
+	else
+		printf("Opendir error\n");
+}
+
+void	parse_folder(int argc, char *argv[], int flags)
+{
+	(void) flags;
+	for (int i = 0; i < argc; i++)
+	{
+		if (argv[i][0])
+		{
+			list_folder_content(argv[i], flags);
+			argv[i][0] = 0;
+		}
+	}
+}
+
+int	parser(int argc, char *argv[])
+{
+	int flags = 0;
+	flags |= parse_flags(argc, argv);
+	int status = parse_no_files(argc, argv);
+	parse_files(argc, argv, flags);
+	parse_folder(argc, argv, flags);
+	return (status);
 }
 
 int main(int argc, char *argv[])
 {
-	// int		flags = get_flags(&argc, &argv);
-	list_files(argc - 1, argv + 1);
+	(void) argc;
+	show_long_file(argv[1]);
 	return (0);
+	// return (parser(argc - 1, argv + 1));
 }

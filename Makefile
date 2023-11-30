@@ -6,21 +6,30 @@ _CYAN="\033[0;36m"
 
 NAME = ft_ls
 
-SRC = main.c
+SRC = main.c \
+		flags.c \
+		print.c
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
 
 CC = gcc
-CFLAGS = -Wall -Werror -Wextra
-INC = -Iincludes
+CFLAGS = -Wall -Werror -Wextra -g3
+INC = -Iincludes -I$(dir $(LIB))/includes
+
+LIB = libft/libft.a
+LIBFLAGS = -Llibft -lft
+
 
 SRC_DIR = srcs
 OBJ_DIR = objs
 
 all: $(NAME)
 
-$(NAME): $(OBJ_DIR) $(OBJ)
+$(NAME): $(LIB) $(OBJ_DIR) $(OBJ)
 	@echo $(_GREEN)Compiling $(OBJ)...$(END)
-	@$(CC) $(CFLAGS) $(OBJ) -o $@
+	@$(CC) $(LIBFLAGS) $(CFLAGS) $(OBJ) -o $@
+
+$(LIB):
+	@make -C $(dir $@)
 
 $(OBJ_DIR):
 	@mkdir -p $@
@@ -31,6 +40,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 clean:
 	@echo $(_YELLOW)Cleaning $(OBJ)...$(END)
+	@make -C $(dir $(LIB)) fclean
 	@rm -rf $(OBJ_DIR)
 
 fclean: clean
