@@ -53,21 +53,35 @@ int	is_less_by_name(t_list *l1, t_list *l2)
 	return (n1[i] < n2[i]);
 }
 
+struct timespec	get_last_modif_date(char *path)
+{
+    struct stat attr;
+    stat(path, &attr);
+# ifdef __USE_XOPEN2K8
+	return (attr.st_mtim);
+# else
+	struct timespec	ts;
+	ts.tv_sec = attr.st_mtime;
+	ts.tv_nsec = attr.st_mtimensec;
+	return (ts);
+# endif
+}
+
 int	is_less_by_time(t_list *l1, t_list *l2)
 {
 	if (!l1 || !l2)
 		return (1);
 	char	*n1 = ((struct dirent *) l1->content)->d_name;
 	char	*n2 = ((struct dirent *) l2->content)->d_name;
-    struct stat attr1;
-    stat(n1, &attr1);
-    struct stat attr2;
-    stat(n2, &attr2);
-	struct timespec date1 = attr1.st_mtim;
-	struct timespec date2 = attr2.st_mtim;
-	if (attr1.st_mtimensec == attr2.st_mtimensec)
-		return (is_less_by_name(l1, l2));
-	return (attr1.st_mtimensec > attr2.st_mtimensec);
+	struct timespec date1 = get_last_modif_date(n1);
+	struct timespec date2 = get_last_modif_date(n2);
+	if (date1.tv_sec == date2.tv_sec)
+	{
+		if (date1.tv_nsec == date2.tv_nsec)
+			return (is_less_by_name(l1, l2));
+		return (date1.tv_nsec > date2.tv_nsec);
+	}
+	return (date1.tv_sec > date2.tv_sec);
 }
 
 t_list	*get_min(t_list *lst, int flags)
