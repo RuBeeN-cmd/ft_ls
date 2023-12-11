@@ -57,7 +57,17 @@ int	is_less_by_time(t_list *l1, t_list *l2)
 {
 	if (!l1 || !l2)
 		return (1);
-	return (1);
+	char	*n1 = ((struct dirent *) l1->content)->d_name;
+	char	*n2 = ((struct dirent *) l2->content)->d_name;
+    struct stat attr1;
+    stat(n1, &attr1);
+    struct stat attr2;
+    stat(n2, &attr2);
+	struct timespec date1 = attr1.st_mtim;
+	struct timespec date2 = attr2.st_mtim;
+	if (attr1.st_mtimensec == attr2.st_mtimensec)
+		return (is_less_by_name(l1, l2));
+	return (attr1.st_mtimensec > attr2.st_mtimensec);
 }
 
 t_list	*get_min(t_list *lst, int flags)

@@ -23,9 +23,12 @@ OBJ_DIR = objs
 
 all: $(NAME)
 
-$(NAME): $(LIB) $(OBJ_DIR) $(OBJ)
+$(NAME): test $(LIB) $(OBJ_DIR) $(OBJ)
 	@echo $(_GREEN)Compiling $(OBJ)...$(END)
 	@$(CC) $(CFLAGS) $(OBJ) $(LIBFLAGS) -o $@
+
+test:
+	@rm -rf a .a A aa z .z Z zz
 
 $(LIB):
 	@make -C $(dir $@)
