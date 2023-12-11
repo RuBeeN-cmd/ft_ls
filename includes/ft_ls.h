@@ -26,5 +26,6 @@ typedef struct	s_args
 }				t_args;
 
 int		parse_flags(char argv[]);
+void	sort_list(t_list *lst, int flags);
 
 #endif

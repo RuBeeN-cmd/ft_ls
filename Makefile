@@ -7,7 +7,8 @@ _CYAN="\033[0;36m"
 NAME = ft_ls
 
 SRC = main.c \
-		flags.c
+		flags.c \
+		sorting.c
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
 
 CC = gcc
