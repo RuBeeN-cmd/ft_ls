@@ -33,19 +33,16 @@ int	get_flags(char flags_str[])
 	return (flags);
 }
 
-int	parse_flags(int argc, char *argv[])
+int	parse_flags(char argv[])
 {
 	int	flags = 0;
-	for (int i = 0; i < argc; i++)
+	if (argv[0] == '-' && argv[1])
 	{
-		if (argv[i][0] == '-' && argv[i][1])
-		{
-			if (argv[i][1] == '-' && argv[i][2])
-				unrecognized_option(argv[i]);
-			else if (argv[i][1] != '-')
-				flags |= get_flags(argv[i] + 1);
-			argv[i][0] = 0;
-		}
+		if (argv[1] == '-' && argv[2])
+			unrecognized_option(argv);
+		else if (argv[1] != '-')
+			flags |= get_flags(argv + 1);
+		argv[0] = 0;
 	}
 	return (flags);
 }

@@ -18,7 +18,13 @@
 #define	REVERSE		1 << 3
 #define	TIME		1 << 4
 
-int	parse_flags(int argc, char *argv[]);
-void	show_long_file(char name[]);
+typedef struct	s_args
+{
+	int		argc;
+	char	**argv;
+	int		flags;
+}				t_args;
+
+int		parse_flags(char argv[]);
 
 #endif

@@ -1,46 +1,17 @@
 #include "ft_ls.h"
 
-
-int	parse_no_files(int argc, char *argv[])
+void	parse_args(t_args *args, int argc, char *argv[])
 {
-	int	status = 0;
+	args->flags = 0;
+	args->argc = 0;
 	for (int i = 0; i < argc; i++)
 	{
-		if (argv[i][0])
-		{
-			struct stat	stat_;
-			if (stat(argv[i], &stat_) == -1)
-			{
-				printf("ft_ls: cannot access '%s': %s\n", argv[i], strerror(errno));
-				status = 2;
-				argv[i][0] = 0;
-			}
-		}
+		if (argv[i][0] == '-' && argv[i][1])
+			args->flags |= parse_flags(argv[i]);
+		else
+			args->argc++;
 	}
-	return (status);
-}
-
-void	parse_files(int argc, char *argv[], int flags)
-{
-	(void) flags;
-	for (int i = 0; i < argc; i++)
-	{
-		if (argv[i][0])
-		{
-			struct stat	stat_;
-			stat(argv[i], &stat_);
-			if (!S_ISDIR(stat_.st_mode))
-			{
-				printf("file : %s\n", argv[i]);
-				argv[i][0] = 0;
-			}
-			else if (flags & LONG && lstat(argv[i], &stat_) != -1)
-			{
-				printf("symlink : %s\n", argv[i]);
-				argv[i][0] = 0;
-			}
-		}
-	}
+	args->argv = argv;
 }
 
 t_list	*fill_list(DIR *dir, int flags)
@@ -72,8 +43,42 @@ int	is_less(t_list *l1, t_list *l2, int flags)
 	char	*n1 = ((struct dirent *) l1->content)->d_name;
 	char	*n2 = ((struct dirent *) l2->content)->d_name;
 	int i = 0;
-	while (n1[i] && n1[i] == n2[i])
+	int j = 0;
+	while (n1[i] == '.' || n1[i] == '_')
 		i++;
+	while (n2[j] == '.' || n2[j] == '_')
+		j++;
+	while (n1[i] && ft_tolower(n1[i]) == ft_tolower(n2[j]))
+	{
+		i++;
+		j++;
+		while (n1[i] == '.' || n1[i] == '_')
+			i++;
+		while (n2[j] == '.' || n2[j] == '_')
+			j++;
+	}
+	if (n1[i] || n2[j])
+		return (ft_tolower(n1[i]) < ft_tolower(n2[j]));
+	// i = 0;
+	// j = 0;
+	// while (n1[i] == '.' || n1[i] == '_')
+	// 	i++;
+	// while (n2[j] == '.' || n2[j] == '_')
+	// 	j++;
+	// while (n1[i] && n1[i] == n2[j])
+	// {
+	// 	i++;
+	// 	j++;
+	// 	while (n1[i] == '.' || n1[i] == '_')
+	// 		i++;
+	// 	while (n2[j] == '.' || n2[j] == '_')
+	// 		j++;
+	// }
+	// i = 0;
+	// if (n1[i] || n2[j])
+	// 	return (n1[i] > n2[j]);
+	// while (n1[i] && n1[i] == n2[i])
+	// 	i++;
 	return (n1[i] < n2[i]);
 }
 
@@ -123,33 +128,11 @@ void	list_folder_content(char folder_name[], int flags)
 		printf("Opendir error\n");
 }
 
-void	parse_folder(int argc, char *argv[], int flags)
-{
-	(void) flags;
-	for (int i = 0; i < argc; i++)
-	{
-		if (argv[i][0])
-		{
-			list_folder_content(argv[i], flags);
-			argv[i][0] = 0;
-		}
-	}
-}
-
-int	parser(int argc, char *argv[])
-{
-	int flags = 0;
-	flags |= parse_flags(argc, argv);
-	int status = parse_no_files(argc, argv);
-	parse_files(argc, argv, flags);
-	parse_folder(argc, argv, flags);
-	return (status);
-}
-
 int main(int argc, char *argv[])
 {
-	(void) argc;
-	show_long_file(argv[1]);
+	t_args	args;
+	parse_args(&args, argc - 1, argv + 1);
+	if (!args.argc)
+		list_folder_content(".", args.flags);
 	return (0);
-	// return (parser(argc - 1, argv + 1));
 }

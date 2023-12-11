@@ -7,8 +7,7 @@ _CYAN="\033[0;36m"
 NAME = ft_ls
 
 SRC = main.c \
-		flags.c \
-		print.c
+		flags.c
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
 
 CC = gcc
@@ -18,7 +17,6 @@ INC = -Iincludes -I$(dir $(LIB))/includes
 LIB = libft/libft.a
 LIBFLAGS = -Llibft -lft
 
-
 SRC_DIR = srcs
 OBJ_DIR = objs
 
@@ -26,7 +24,7 @@ all: $(NAME)
 
 $(NAME): $(LIB) $(OBJ_DIR) $(OBJ)
 	@echo $(_GREEN)Compiling $(OBJ)...$(END)
-	@$(CC) $(LIBFLAGS) $(CFLAGS) $(OBJ) -o $@
+	@$(CC) $(CFLAGS) $(OBJ) $(LIBFLAGS) -o $@
 
 $(LIB):
 	@make -C $(dir $@)
