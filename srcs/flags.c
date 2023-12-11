@@ -2,13 +2,13 @@
 
 void	invalid_option(char option)
 {
-	printf("ls: invalid option -- '%c'\n", option);
+	ft_printf("ls: invalid option -- '%c'\n", option);
 	exit(2);
 }
 
 void	unrecognized_option(char option[])
 {
-	printf("ls: unrecognized option '%s'\n", option);
+	ft_printf("ls: unrecognized option '%s'\n", option);
 	exit(2);
 }
 

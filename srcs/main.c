@@ -38,10 +38,10 @@ void	list_folder_content(char folder_name[], int flags)
 		sort_list(lst, flags);
 		show_list(lst, flags);
 		if (closedir(dir) == -1)
-			printf("Closedir error\n");
+			ft_printf("Closedir error\n");
 	}
 	else
-		printf("Opendir error\n");
+		ft_printf("Opendir error\n");
 }
 
 int main(int argc, char *argv[])

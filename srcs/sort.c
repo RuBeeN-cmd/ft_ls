@@ -53,17 +53,12 @@ int	is_less_by_name(t_list *l1, t_list *l2)
 	return (n1[i] < n2[i]);
 }
 
-struct timespec	get_last_modif_date(char *path)
+time_t	get_last_modif_date(struct stat statbuf)
 {
-    struct stat attr;
-    stat(path, &attr);
 # ifdef __USE_XOPEN2K8
-	return (attr.st_mtim);
+	return (statbuf.st_mtim.tv_sec * 1000000000LL + statbuf.st_mtim.tv_nsec);
 # else
-	struct timespec	ts;
-	ts.tv_sec = attr.st_mtime;
-	ts.tv_nsec = attr.st_mtimensec;
-	return (ts);
+	return (statbuf.st_mtime * 1000000000LL + statbuf.st_mtimensec);
 # endif
 }
 
@@ -73,15 +68,15 @@ int	is_less_by_time(t_list *l1, t_list *l2)
 		return (1);
 	char	*n1 = ((struct dirent *) l1->content)->d_name;
 	char	*n2 = ((struct dirent *) l2->content)->d_name;
-	struct timespec date1 = get_last_modif_date(n1);
-	struct timespec date2 = get_last_modif_date(n2);
-	if (date1.tv_sec == date2.tv_sec)
-	{
-		if (date1.tv_nsec == date2.tv_nsec)
-			return (is_less_by_name(l1, l2));
-		return (date1.tv_nsec > date2.tv_nsec);
-	}
-	return (date1.tv_sec > date2.tv_sec);
+    struct stat statbuf1;
+    stat(n1, &statbuf1);
+    struct stat statbuf2;
+    stat(n2, &statbuf2);
+	time_t date1 = get_last_modif_date(statbuf1);
+	time_t date2 = get_last_modif_date(statbuf2);
+	if (date1 == date2)
+		return (is_less_by_name(l1, l2));
+	return (date1 > date2);
 }
 
 t_list	*get_min(t_list *lst, int flags)

@@ -33,5 +33,3 @@ BONUS:
     ❌ -g,  like -l, but do not list owner
 
     ❌ -d,  list directories themselves, not their contents
-
-    ❌ -G, 
