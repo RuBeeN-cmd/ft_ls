@@ -28,5 +28,6 @@ typedef struct	s_args
 
 int		parse_flags(char argv[]);
 void	sort_list(t_list *lst, int flags);
+void	show_list(t_list *lst, int flags);
 
 #endif

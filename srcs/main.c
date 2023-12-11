@@ -28,22 +28,6 @@ t_list	*fill_list(DIR *dir, int flags)
 	return (lst);
 }
 
-void	show_list(t_list *lst, int flags)
-{
-	(void) flags;
-
-	while (lst)
-	{
-		struct stat attr;
-		stat(((struct dirent *) lst->content)->d_name, &attr);
-		printf("%s\t\t\t", ((struct dirent *) lst->content)->d_name);
-		char date[20];
-		strftime(date, 20, "%d-%m-%y %H:%M", localtime(&(attr.st_ctime)));
-    	printf("%s\n", date);
-		lst = lst->next;
-	}
-}
-
 void	list_folder_content(char folder_name[], int flags)
 {
 	t_list	*lst;

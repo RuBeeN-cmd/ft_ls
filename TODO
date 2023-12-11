@@ -1,0 +1,37 @@
+MANDATORY:
+
+  FLAGS:
+
+    ❌ -l, use a long listing format
+
+    ❌ -R, list subdirectories recursively
+
+    ✅ -a, do not ignore entries starting with .
+
+    ✅ -r, reverse order while sorting
+
+    ✅ -t, sort by time, newest first
+
+BONUS:
+
+  ❌ Management of ACL and extended attributes.
+
+  ❌ Management of the columns without the option -l
+
+  ❌ Management of views in colors (Similar to option -G)
+
+  ❌ Optimization of your code
+
+  FLAGS:
+
+    ❌ -u,  with -lt: sort by, and show, access time;
+            with -l:  show access  time and sort by name;
+            otherwise: sort by access time, newest first
+
+    ❌ -f,  do not sort, enable -aU, disable -ls --color
+
+    ❌ -g,  like -l, but do not list owner
+
+    ❌ -d,  list directories themselves, not their contents
+
+    ❌ -G, 

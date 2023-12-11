@@ -1,34 +1,22 @@
-// #include "ft_ls.h"
+#include "ft_ls.h"
 
-// typedef struct	s_long_format
-// {
-// 	char	type;
-// 	char	mod[9];
-// 	char	*nb_links;
-// 	char	*owner;
-// 	char	*group;
-// 	char	*size;
-// 	char	*date;
-// 	char	*name;
-// }				t_long_format;
-
-// char	get_file_type(mode_t mode)
-// {
-// 	// Remaining : 'C', 'D', 'M', 'n', 'P', 's', 'S', 'm'
-// 	if (mode & S_IFREG)
-// 		return ('-');
-// 	else if (mode & S_IFDIR)
-// 		return ('d');
-// 	else if (mode & S_IFBLK)
-// 		return ('b');
-// 	else if (mode & S_IFCHR)
-// 		return ('c');
-// 	else if (mode & S_IFIFO)
-// 		return ('p');
-// 	else if (mode & S_IFLNK)
-// 		return ('l');
-// 	return ('?');
-// }
+char	get_file_type(mode_t mode)
+{
+	// Remaining : 'C', 'D', 'M', 'n', 'P', 's', 'S', 'm'
+	if (S_ISREG(mode))
+		return ('-');
+	else if (S_ISDIR(mode))
+		return ('d');
+	else if (S_ISBLK(mode))
+		return ('b');
+	else if (S_ISCHR(mode))
+		return ('c');
+	else if (S_ISFIFO(mode))
+		return ('p');
+	else if (S_ISLNK(mode))
+		return ('l');
+	return ('?');
+}
 
 // char	*get_file_mod(mode_t mode)
 // {
@@ -70,10 +58,28 @@
 // 	return (getgrgid(group_id)->gr_name);
 // }
 
-// void	show_long_file(char name[])
-// {
-// 	t_long_format	file;
-// 	struct stat statbuf;
-// 	stat(name, &statbuf);
-//     printf("%d\n", statbuf.st_mode);
-// }
+void	show_long_file(char name[])
+{
+	struct stat statbuf;
+	stat(name, &statbuf);
+	ft_putchar_fd(get_file_type(statbuf.st_mode), 1);
+	ft_putchar_fd(' ', 1);
+	ft_putendl_fd(name, 1);
+}
+
+void	show_list(t_list *lst, int flags)
+{
+	if (flags & LONG)
+	{
+		while (lst)
+		{
+			show_long_file(((struct dirent *) lst->content)->d_name);
+			lst = lst->next;
+		}
+	}
+	while (lst)
+	{
+		printf("%s\n", ((struct dirent *) lst->content)->d_name);
+		lst = lst->next;
+	}
+}

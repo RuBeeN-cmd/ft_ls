@@ -8,7 +8,8 @@ NAME = ft_ls
 
 SRC = main.c \
 		flags.c \
-		sort.c
+		sort.c \
+		print.c
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
 
 CC = gcc
