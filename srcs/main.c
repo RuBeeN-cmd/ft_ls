@@ -59,26 +59,26 @@ int	is_less(t_list *l1, t_list *l2, int flags)
 	}
 	if (n1[i] || n2[j])
 		return (ft_tolower(n1[i]) < ft_tolower(n2[j]));
-	// i = 0;
-	// j = 0;
-	// while (n1[i] == '.' || n1[i] == '_')
-	// 	i++;
-	// while (n2[j] == '.' || n2[j] == '_')
-	// 	j++;
-	// while (n1[i] && n1[i] == n2[j])
-	// {
-	// 	i++;
-	// 	j++;
-	// 	while (n1[i] == '.' || n1[i] == '_')
-	// 		i++;
-	// 	while (n2[j] == '.' || n2[j] == '_')
-	// 		j++;
-	// }
-	// i = 0;
-	// if (n1[i] || n2[j])
-	// 	return (n1[i] > n2[j]);
-	// while (n1[i] && n1[i] == n2[i])
-	// 	i++;
+	i = 0;
+	j = 0;
+	while (n1[i] == '.' || n1[i] == '_')
+		i++;
+	while (n2[j] == '.' || n2[j] == '_')
+		j++;
+	while (n1[i] && n1[i] == n2[j])
+	{
+		i++;
+		j++;
+		while (n1[i] == '.' || n1[i] == '_')
+			i++;
+		while (n2[j] == '.' || n2[j] == '_')
+			j++;
+	}
+	if (n1[i] || n2[j])
+		return (n1[i] > n2[j]);
+	i = 0;
+	while (n1[i] && n1[i] == n2[i])
+		i++;
 	return (n1[i] < n2[i]);
 }
 
@@ -134,5 +134,16 @@ int main(int argc, char *argv[])
 	parse_args(&args, argc - 1, argv + 1);
 	if (!args.argc)
 		list_folder_content(".", args.flags);
+	else
+	{
+		for (int i = 0; args.argc; i++)
+		{
+			if (args.argv[i][0])
+			{
+				list_folder_content(args.argv[i], args.flags);
+				args.argc--;
+			}
+		}
+	}
 	return (0);
 }
