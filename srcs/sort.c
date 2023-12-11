@@ -7,11 +7,10 @@ void	swap(t_list *l1, t_list *l2)
 	l2->content = tmp;
 }
 
-int	is_less(t_list *l1, t_list *l2, int flags)
+int	is_less_by_name(t_list *l1, t_list *l2)
 {
 	if (!l1 || !l2)
 		return (1);
-	(void) flags;
 	char	*n1 = ((struct dirent *) l1->content)->d_name;
 	char	*n2 = ((struct dirent *) l2->content)->d_name;
 	int i = 0;
@@ -54,19 +53,33 @@ int	is_less(t_list *l1, t_list *l2, int flags)
 	return (n1[i] < n2[i]);
 }
 
+int	is_less_by_time(t_list *l1, t_list *l2)
+{
+	if (!l1 || !l2)
+		return (1);
+	return (1);
+}
+
 t_list	*get_min(t_list *lst, int flags)
 {
 	if (!lst)
 		return (NULL);
+	if (!lst->next)
+		return (lst);
 	t_list	*next_min = get_min(lst->next, flags);
-	if (is_less(lst, next_min, flags))
+	int is_less = 0;
+	if (flags & TIME)
+		is_less = is_less_by_time(lst, next_min);
+	else
+		is_less = is_less_by_name(lst, next_min);
+	if ((!(flags & REVERSE) && is_less) || ((flags & REVERSE) && !is_less))
 		return (lst);
 	return (next_min);
 }
 
 void	sort_list(t_list *lst, int flags)
 {
-	if (!lst)
+	if (!lst->next)
 		return ;
 	t_list	*min = get_min(lst, flags);
 	swap(lst, min);
