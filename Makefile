@@ -7,9 +7,11 @@ _CYAN="\033[0;36m"
 NAME = ft_ls
 
 SRC = main.c \
+		args.c \
 		flags.c \
 		sort.c \
-		print.c
+		print.c \
+		long_format.c
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
 
 CC = gcc
@@ -24,12 +26,9 @@ OBJ_DIR = objs
 
 all: $(NAME)
 
-$(NAME): test $(LIB) $(OBJ_DIR) $(OBJ)
+$(NAME): $(LIB) $(OBJ_DIR) $(OBJ)
 	@echo $(_GREEN)Compiling $(OBJ)...$(END)
 	@$(CC) $(CFLAGS) $(OBJ) $(LIBFLAGS) -o $@
-
-test:
-	@rm -rf a .a A aa z .z Z zz
 
 $(LIB):
 	@make -C $(dir $@)
