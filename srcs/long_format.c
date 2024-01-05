@@ -45,6 +45,41 @@ void	fill_perm(char *perm_buff, mode_t mode)
 	}
 }
 
+int	get_nbr_len(long long n)
+{
+	int	i;
+
+	i = 0;
+	if (!n)
+		return (1);
+	while (n)
+	{
+		n /= 10;
+		i++;
+	}
+	return (i);
+}
+
+char	*ft_ultoa(unsigned long n)
+{
+	char	*str;
+	int		i;
+
+	str = malloc(sizeof(char) * (get_nbr_len(n) + 1));
+	if (!str)
+		return (NULL);
+	i = get_nbr_len(n);
+	if (!n)
+		str[0] = '0';
+	str[i] = 0;
+	while (n)
+	{
+		str[--i] = n % 10 + '0';
+		n /= 10;
+	}
+	return (str);
+}
+
 void	fill_date(char *date_buff, time_t ts)
 {
 	char *new_buf = ctime(&ts);
@@ -68,7 +103,7 @@ void	fill_line(t_line *line, t_content *content)
 		line->owner_group = ft_itoa(content->stat_buf.st_gid);
 	else
 		line->owner_group = ft_strdup(grgid->gr_name);
-	line->size = ft_itoa(content->stat_buf.st_size);
+	line->size = ft_ultoa(content->stat_buf.st_size);
 	fill_date(line->date, content->stat_buf.st_mtime);
 	line->name = content->name;
 }
@@ -94,7 +129,7 @@ void	print_line(t_line line, unsigned int *len)
 	ft_printf("%s %s %s\n", line.size, line.date, line.name);
 }
 
-void	show_long_format(t_list *lst)
+void	show_long_format(t_list *lst, int is_reg)
 {
 	int len = ft_lstsize(lst);
 	t_line	*lines = malloc(sizeof(t_line) * len);
@@ -119,7 +154,8 @@ void	show_long_format(t_list *lst)
 		i++;
 	}
 	i = 0;
-	ft_printf("total %u\n", total_size);
+	if (!is_reg)
+		ft_printf("total %u\n", total_size);
 	while (i < len)
 	{
 		print_line(lines[i], max_len);

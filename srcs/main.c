@@ -85,7 +85,7 @@ void	list_folder_content(char folder_name[], int flags, int multiple_args)
 		sort_list(lst, flags);
 		if (multiple_args || flags & RECURSIVE)
 			ft_printf("%s:\n", folder_name);
-		show_list(lst, flags);
+		show_list(lst, flags, 0);
 		if (flags & RECURSIVE)
 			call_list_folder_foreach_folder(lst, flags);
 		ft_lstclear(&lst, free_content);
@@ -155,7 +155,7 @@ void	treat_reg_file(t_args *args, t_stat_list *args_stats)
 	if (!lst)
 		return ;
 	sort_list(lst, args->flags);
-	show_list(lst, args->flags);
+	show_list(lst, args->flags, 1);
 	if (lst && args->argc)
 		ft_putchar_fd('\n', 1);
 	ft_lstclear(&lst, free_content);

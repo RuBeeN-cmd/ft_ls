@@ -9,10 +9,10 @@ void	show_column_format(t_list *lst)
 	}
 }
 
-void	show_list(t_list *lst, int flags)
+void	show_list(t_list *lst, int flags, int is_reg)
 {
 	if (flags & LONG)
-		show_long_format(lst);
+		show_long_format(lst, is_reg);
 	else
 		show_column_format(lst);
 }

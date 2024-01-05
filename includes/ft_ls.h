@@ -59,8 +59,8 @@ t_stat_list	*get_args_stats(t_args *args);
 void		del_stat_lst(t_stat_list *lst);
 
 void	sort_list(t_list *lst, int flags);
-void	show_list(t_list *lst, int flags);
-void	show_long_format(t_list *lst);
+void	show_long_format(t_list *lst, int is_reg);
+void	show_list(t_list *lst, int flags, int is_reg);
 void	call_list_folder_foreach_folder(t_list *lst, int flags);
 
 #endif
