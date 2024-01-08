@@ -1,0 +1,10 @@
+Makefile
+ft_ls
+includes
+libft
+objs
+out
+out_ls
+srcs
+test.sh
+tests
