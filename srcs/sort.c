@@ -52,7 +52,7 @@ int	is_less_by_name(t_list *l1, t_list *l2)
 		i++;
 	if (n1[i] == '_')
 		return ('/' < n2[i]);
-	else
+	else if (n1[i] == '_')
 		return (n1[i] < '/');
 	return (n1[i] < n2[i]);
 }
