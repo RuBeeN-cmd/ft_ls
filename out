@@ -1,9 +1,25 @@
-ft_ls
-includes
-libft
-Makefile
-objs
-out
-srcs
-tests
-test.sh
+total 8
+drwxr-xr-x 2 rrollin 2022_angouleme 4096 Jan  8 17:34 .
+drwxr-xr-x 3 rrollin 2022_angouleme 4096 Jan  8 15:20 ..
+-rw-r--r-- 1 rrollin 2022_angouleme    0 Jan  8 15:20 .a
+-rw-r--r-- 1 rrollin 2022_angouleme    0 Jan  8 15:20 _a
+-rw-r--r-- 1 rrollin 2022_angouleme    0 Jan  8 15:20 a
+-rw-r--r-- 1 rrollin 2022_angouleme    0 Jan  8 15:20 a.
+-rw-r--r-- 1 rrollin 2022_angouleme    0 Jan  8 15:20 a_
+-rw-r--r-- 1 rrollin 2022_angouleme    0 Jan  8 15:20 .A
+-rw-r--r-- 1 rrollin 2022_angouleme    0 Jan  8 15:20 A_
+-rw-r--r-- 1 rrollin 2022_angouleme    0 Jan  8 15:20 _A
+-rw-r--r-- 1 rrollin 2022_angouleme    0 Jan  8 15:20 A
+-rw-r--r-- 1 rrollin 2022_angouleme    0 Jan  8 15:20 A.
+-rw-r--r-- 1 rrollin 2022_angouleme    0 Jan  8 17:32 a__aaaa
+-rw-r--r-- 1 rrollin 2022_angouleme    0 Jan  8 17:27 aa_________________aaa
+-rw-r--r-- 1 rrollin 2022_angouleme    0 Jan  8 17:29 aa_aaa
+-rw-r--r-- 1 rrollin 2022_angouleme    0 Jan  8 17:30 aaa_aa
+-rw-r--r-- 1 rrollin 2022_angouleme    0 Jan  8 17:34 AAA_AA
+-rw-r--r-- 1 rrollin 2022_angouleme    0 Jan  8 17:33 a_______aaaaa
+-rw-r--r-- 1 rrollin 2022_angouleme    0 Jan  8 17:31 a_aaaaa
+-rw-r--r-- 1 rrollin 2022_angouleme    0 Jan  8 17:25 aaa_______aaa
+-rw-r--r-- 1 rrollin 2022_angouleme    0 Jan  8 17:25 aaa___aaa
+-rw-r--r-- 1 rrollin 2022_angouleme    0 Jan  8 17:34 a_______aaaaaman
+-rw-r--r-- 1 rrollin 2022_angouleme    0 Jan  8 17:25 .b
+-rw-r--r-- 1 rrollin 2022_angouleme    0 Jan  8 15:20 b

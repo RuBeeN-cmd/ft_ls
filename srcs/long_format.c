@@ -6,6 +6,14 @@ void	free_line(t_line line)
 	free(line.nb_links);
 	free(line.owner_usr);
 	free(line.owner_group);
+	// if (line.link)
+	// 	free(line.link);
+	// if (line.size)
+	// 	free(line.size);
+	// if (line.major)
+	// 	free(line.major);
+	// if (line.minor)
+	// 	free(line.minor);
 }
 
 char	get_file_type(mode_t mode)
@@ -90,7 +98,7 @@ void	fill_size(t_line *line, struct stat stat_buf)
 	line->size = NULL;
 	line->major = NULL;
 	line->minor = NULL;
-	if (stat_buf.st_mode & S_ISCHR)
+	if (S_ISCHR(stat_buf.st_mode))
 	{
 		line->major = ft_ultoa(major(stat_buf.st_dev));
 		line->minor = ft_ultoa(minor(stat_buf.st_dev));
@@ -115,13 +123,24 @@ void	fill_line(t_line *line, t_content *content)
 		line->owner_group = ft_itoa(content->stat_buf.st_gid);
 	else
 		line->owner_group = ft_strdup(grgid->gr_name);
-	fill_size(&line->size, content->stat_buf);
+	fill_size(line, content->stat_buf);
 	fill_date(line->date, content->stat_buf.st_mtime);
+	line->link = NULL;
+	if (S_ISLNK(content->stat_buf.st_mode))
+	{
+		char	buff[200];
+		ft_bzero(buff, 200);
+		ft_printf("%s\n", content->path);
+		readlink(content->path, buff, 199);
+		line->link = buff;
+	}
 	line->name = content->name;
 }
 
 void	print_spaces(int n)
 {
+	if (n < 0)
+		return ;
 	while (n--)
 		ft_putchar_fd(' ', 1);
 }
@@ -144,12 +163,18 @@ void	print_line(t_line line, unsigned int *len)
 	}
 	else
 	{
-		print_spaces(len[4] - ft_strlen(line.major));
+		if (len[3] > len[4] + len[5] + 2)
+			print_spaces(len[3] - len[4] - len[5] - 2);
+		else
+			print_spaces(len[4] - ft_strlen(line.major));
 		ft_printf("%s, ", line.major);
 		print_spaces(len[5] - ft_strlen(line.minor));
 		ft_printf("%s ", line.minor);
 	}
-	ft_printf("%s %s\n", line.date, line.name);
+	ft_printf("%s %s", line.date, line.name);
+	if (line.link)
+		ft_printf(" -> %s", line.link);
+	ft_putchar_fd('\n', 1);
 }
 
 void	show_long_format(t_list *lst, int is_reg)
@@ -177,10 +202,11 @@ void	show_long_format(t_list *lst, int is_reg)
 				max_len[3] = ft_strlen(lines[i].size);
 		}
 		else if (ft_strlen(lines[i].major) + ft_strlen(lines[i].minor) + 2 > max_len[3])
-			max_len[3] = ft_strlen(lines[i].size);
-		if (lines[i].major)
-			max_len[3] = ft_strlen(lines[i].size);
-
+			max_len[3] = ft_strlen(lines[i].major) + ft_strlen(lines[i].minor) + 2;
+		if (lines[i].major && ft_strlen(lines[i].major) > max_len[4])
+			max_len[4] = ft_strlen(lines[i].major);
+		if (lines[i].minor && ft_strlen(lines[i].minor) > max_len[5])
+			max_len[5] = ft_strlen(lines[i].minor);
 		tmp = tmp->next;
 		i++;
 	}

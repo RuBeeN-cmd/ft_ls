@@ -52,11 +52,7 @@ t_list	*fill_list(DIR *dir, int flags, char *folder_path)
 		return (fill_list(dir, flags, folder_path));
 	lst = create_content_lst(flags, dirent, folder_path);
 	if (flags & (LONG | TIME))
-	{
-		int ret = stat(((t_content *) lst->content)->path, &(((t_content *) lst->content)->stat_buf));
-		if (ret == -1)
-			lstat(((t_content *) lst->content)->path, &(((t_content *) lst->content)->stat_buf));
-	}
+		lstat(((t_content *) lst->content)->path, &(((t_content *) lst->content)->stat_buf));
 	if ((flags & RECURSIVE && ((t_content *) lst->content)->dirent->d_type != DT_DIR)
 		|| (flags & (LONG | TIME) && !(flags & RECURSIVE))
 		|| (flags & RECURSIVE && (is_dot_folder(((t_content *) lst->content)->dirent->d_name))))

@@ -12,6 +12,7 @@
 #include <time.h>
 #include <pwd.h>
 #include <grp.h>
+#include <sys/sysmacros.h>
 
 #define	LONG		1 << 0
 #define	RECURSIVE	1 << 1
@@ -53,6 +54,7 @@ typedef struct	s_line
 	char	*minor;
 	char	date[13];
 	char	*name;
+	char	*link;
 }				t_line;
 
 void		parse_args(t_args *args, int argc, char *argv[]);
