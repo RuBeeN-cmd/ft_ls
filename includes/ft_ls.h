@@ -49,6 +49,8 @@ typedef struct	s_line
 	char	*owner_usr;
 	char	*owner_group;
 	char	*size;
+	char	*major;
+	char	*minor;
 	char	date[13];
 	char	*name;
 }				t_line;

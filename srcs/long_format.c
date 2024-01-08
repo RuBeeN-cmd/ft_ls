@@ -85,7 +85,19 @@ void	fill_date(char *date_buff, time_t ts)
 	char *new_buf = ctime(&ts);
 	ft_strlcpy(date_buff, &(new_buf[4]), 13);
 }
-
+void	fill_size(t_line *line, struct stat stat_buf)
+{
+	line->size = NULL;
+	line->major = NULL;
+	line->minor = NULL;
+	if (stat_buf.st_mode & S_ISCHR)
+	{
+		line->major = ft_ultoa(major(stat_buf.st_dev));
+		line->minor = ft_ultoa(minor(stat_buf.st_dev));
+	}
+	else
+		line->size = ft_ultoa(stat_buf.st_size);
+}
 void	fill_line(t_line *line, t_content *content)
 {
 	line->type = get_file_type(content->stat_buf.st_mode);
@@ -103,7 +115,7 @@ void	fill_line(t_line *line, t_content *content)
 		line->owner_group = ft_itoa(content->stat_buf.st_gid);
 	else
 		line->owner_group = ft_strdup(grgid->gr_name);
-	line->size = ft_ultoa(content->stat_buf.st_size);
+	fill_size(&line->size, content->stat_buf);
 	fill_date(line->date, content->stat_buf.st_mtime);
 	line->name = content->name;
 }
@@ -125,8 +137,19 @@ void	print_line(t_line line, unsigned int *len)
 	print_spaces(len[1] - ft_strlen(line.owner_usr));
 	ft_printf("%s ", line.owner_group);
 	print_spaces(len[2] - ft_strlen(line.owner_group));
-	print_spaces(len[3] - ft_strlen(line.size));
-	ft_printf("%s %s %s\n", line.size, line.date, line.name);
+	if (line.size)
+	{
+		print_spaces(len[3] - ft_strlen(line.size));
+		ft_printf("%s ", line.size);
+	}
+	else
+	{
+		print_spaces(len[4] - ft_strlen(line.major));
+		ft_printf("%s, ", line.major);
+		print_spaces(len[5] - ft_strlen(line.minor));
+		ft_printf("%s ", line.minor);
+	}
+	ft_printf("%s %s\n", line.date, line.name);
 }
 
 void	show_long_format(t_list *lst, int is_reg)
@@ -135,7 +158,7 @@ void	show_long_format(t_list *lst, int is_reg)
 	t_line	*lines = malloc(sizeof(t_line) * len);
 	int i = 0;
 	t_list	*tmp = lst;
-	unsigned int	max_len[4];
+	unsigned int	max_len[6];
 	ft_bzero(max_len, sizeof(max_len));
 	unsigned int	total_size = 0;
 	while (tmp)
@@ -148,8 +171,16 @@ void	show_long_format(t_list *lst, int is_reg)
 			max_len[1] = ft_strlen(lines[i].owner_usr);
 		if (ft_strlen(lines[i].owner_group) > max_len[2])
 			max_len[2] = ft_strlen(lines[i].owner_group);
-		if (ft_strlen(lines[i].size) > max_len[3])
+		if (lines[i].size)
+		{
+			if (ft_strlen(lines[i].size) > max_len[3])
+				max_len[3] = ft_strlen(lines[i].size);
+		}
+		else if (ft_strlen(lines[i].major) + ft_strlen(lines[i].minor) + 2 > max_len[3])
 			max_len[3] = ft_strlen(lines[i].size);
+		if (lines[i].major)
+			max_len[3] = ft_strlen(lines[i].size);
+
 		tmp = tmp->next;
 		i++;
 	}
