@@ -50,6 +50,10 @@ int	is_less_by_name(t_list *l1, t_list *l2)
 	i = 0;
 	while (n1[i] && n1[i] == n2[i])
 		i++;
+	if (n1[i] == '_')
+		return ('/' < n2[i]);
+	else
+		return (n1[i] < '/');
 	return (n1[i] < n2[i]);
 }
 
@@ -80,7 +84,7 @@ t_list	*get_min(t_list *lst, int flags)
 	if (!lst->next)
 		return (lst);
 	t_list	*next_min = get_min(lst->next, flags);
-	int is_less = 0;
+	int is_less;
 	if (flags & TIME)
 		is_less = is_less_by_time(lst, next_min);
 	else
