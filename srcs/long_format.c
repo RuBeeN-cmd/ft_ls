@@ -2,23 +2,22 @@
 
 void	free_line(t_line line)
 {
-	free(line.size);
 	free(line.nb_links);
 	free(line.owner_usr);
 	free(line.owner_group);
-	// if (line.link)
-	// 	free(line.link);
-	// if (line.size)
-	// 	free(line.size);
-	// if (line.major)
-	// 	free(line.major);
-	// if (line.minor)
-	// 	free(line.minor);
+	if (line.link)
+		free(line.link);
+	if (line.size)
+		free(line.size);
+	if (line.major)
+		free(line.major);
+	if (line.minor)
+		free(line.minor);
 }
 
 char	get_file_type(mode_t mode)
 {
-	// Remaining : 'C', 'D', 'M', 'n', 'P', 's', 'S', 'm'
+	// Remaining : 'C', 'D', 'M', 'n', 'P', 'S', 'm'
 	if (S_ISREG(mode))
 		return ('-');
 	else if (S_ISDIR(mode))
@@ -31,6 +30,8 @@ char	get_file_type(mode_t mode)
 		return ('p');
 	else if (S_ISLNK(mode))
 		return ('l');
+	else if (S_ISSOCK(mode))
+		return ('s');
 	return ('?');
 }
 
@@ -130,9 +131,8 @@ void	fill_line(t_line *line, t_content *content)
 	{
 		char	buff[200];
 		ft_bzero(buff, 200);
-		ft_printf("%s\n", content->path);
 		readlink(content->path, buff, 199);
-		line->link = buff;
+		line->link = ft_strdup(buff);
 	}
 	line->name = content->name;
 }

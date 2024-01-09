@@ -57,14 +57,34 @@ typedef struct	s_line
 	char	*link;
 }				t_line;
 
+// args.c
 void		parse_args(t_args *args, int argc, char *argv[]);
-void		parse_flags(t_args *args, int argc, char *argv[]);
 t_stat_list	*get_args_stats(t_args *args);
 void		del_stat_lst(t_stat_list *lst);
 
+// flags.c
+void	parse_flags(t_args *args, int argc, char *argv[]);
+
+// content.c
+t_content	*init_content(struct stat stat_buf, char *name);
+void		free_content(void *content);
+
+// reg_file.c
+void	treat_reg_file(t_args *args, t_stat_list *args_stats);
+
+// remaining.c
+void	treat_remaining(t_args args, t_stat_list *stats);
+
+// list_folder.c
+void	list_folder_content(char folder_name[], int flags, int multiple_args);
+
+// sort.c
 void	sort_list(t_list *lst, int flags);
-void	show_long_format(t_list *lst, int is_reg);
+
+// print.c
 void	show_list(t_list *lst, int flags, int is_reg);
-void	call_list_folder_foreach_folder(t_list *lst, int flags);
+
+// long_format.c
+void	show_long_format(t_list *lst, int is_reg);
 
 #endif

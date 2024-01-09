@@ -11,7 +11,11 @@ SRC = main.c \
 		flags.c \
 		sort.c \
 		print.c \
-		long_format.c
+		long_format.c \
+		content.c \
+		list_folder.c \
+		reg_file.c \
+		remaining.c
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
 
 CC = gcc
