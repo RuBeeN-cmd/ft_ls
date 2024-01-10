@@ -94,6 +94,7 @@ void	fill_date(char *date_buff, time_t ts)
 	char *new_buf = ctime(&ts);
 	ft_strlcpy(date_buff, &(new_buf[4]), 13);
 }
+
 void	fill_size(t_line *line, struct stat stat_buf)
 {
 	line->size = NULL;
@@ -101,8 +102,8 @@ void	fill_size(t_line *line, struct stat stat_buf)
 	line->minor = NULL;
 	if (S_ISCHR(stat_buf.st_mode))
 	{
-		line->major = ft_ultoa(major(stat_buf.st_dev));
-		line->minor = ft_ultoa(minor(stat_buf.st_dev));
+		line->major = ft_ultoa(MAJOR(stat_buf.st_rdev));
+		line->minor = ft_ultoa(MINOR(stat_buf.st_rdev));
 	}
 	else
 		line->size = ft_ultoa(stat_buf.st_size);
@@ -134,7 +135,10 @@ void	fill_line(t_line *line, t_content *content)
 		readlink(content->path, buff, 199);
 		line->link = ft_strdup(buff);
 	}
-	line->name = content->name;
+	if (content->quoted_name)
+		line->name = content->quoted_name;
+	else
+		line->name = content->name;
 }
 
 void	print_spaces(int n)
@@ -166,7 +170,7 @@ void	print_line(t_line line, unsigned int *len)
 		if (len[3] > len[4] + len[5] + 2)
 			print_spaces(len[3] - len[4] - len[5] - 2);
 		else
-			print_spaces(len[4] - ft_strlen(line.major));
+			print_spaces(len[4] - ft_strlen(line.major) - 1);
 		ft_printf("%s, ", line.major);
 		print_spaces(len[5] - ft_strlen(line.minor));
 		ft_printf("%s ", line.minor);

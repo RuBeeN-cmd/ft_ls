@@ -15,7 +15,8 @@ SRC = main.c \
 		content.c \
 		list_folder.c \
 		reg_file.c \
-		remaining.c
+		remaining.c \
+		column.c
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
 
 CC = gcc

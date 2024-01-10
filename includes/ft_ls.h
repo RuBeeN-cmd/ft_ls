@@ -12,7 +12,12 @@
 #include <time.h>
 #include <pwd.h>
 #include <grp.h>
-#include <sys/sysmacros.h>
+#include <sys/ioctl.h>
+
+#define MINORBITS        8
+#define MINORMASK        ((1U << MINORBITS) - 1)
+#define MAJOR(dev)        ((unsigned int) ((dev) >> MINORBITS))
+#define MINOR(dev)        ((unsigned int) ((dev) & MINORMASK))
 
 #define	LONG		1 << 0
 #define	RECURSIVE	1 << 1
@@ -40,6 +45,7 @@ typedef struct	s_content
 	struct dirent	*dirent;
 	struct stat		stat_buf;
 	char			*name;
+	char			*quoted_name;
 	char			*path;
 }				t_content;
 typedef struct	s_line
@@ -83,8 +89,13 @@ void	sort_list(t_list *lst, int flags);
 
 // print.c
 void	show_list(t_list *lst, int flags, int is_reg);
+int		contain_char(char c, char *set);
+
+// column.c
+void	show_column_format(t_list *lst);
 
 // long_format.c
 void	show_long_format(t_list *lst, int is_reg);
+void	print_spaces(int n);
 
 #endif

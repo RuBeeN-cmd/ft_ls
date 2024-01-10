@@ -16,5 +16,7 @@ void	free_content(void *content)
 {
 	if (((t_content *) content)->path)
 		free(((t_content *) content)->path);
+	if (((t_content *) content)->quoted_name)
+		free(((t_content *) content)->quoted_name);
 	free(content);
 }

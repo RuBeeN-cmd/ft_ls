@@ -15,34 +15,34 @@ int	is_less_by_name(t_list *l1, t_list *l2)
 	char	*n2 = ((t_content *) l2->content)->name;
 	int i = 0;
 	int j = 0;
-	while (n1[i] == '.' || n1[i] == '_')
+	while (contain_char(n1[i], " @%-_+.,:{}#!$^&*()=<>?;[]~\"\'"))
 		i++;
-	while (n2[j] == '.' || n2[j] == '_')
+	while (contain_char(n2[j], " @%-_+.,:{}#!$^&*()=<>?;[]~\"\'"))
 		j++;
 	while (n1[i] && ft_tolower(n1[i]) == ft_tolower(n2[j]))
 	{
 		i++;
 		j++;
-		while (n1[i] == '.' || n1[i] == '_')
+		while (contain_char(n1[i], " @%-_+.,:{}#!$^&*()=<>?;[]~\"\'"))
 			i++;
-		while (n2[j] == '.' || n2[j] == '_')
+		while (contain_char(n2[j], " @%-_+.,:{}#!$^&*()=<>?;[]~\"\'"))
 			j++;
 	}
 	if (n1[i] || n2[j])
 		return (ft_tolower(n1[i]) < ft_tolower(n2[j]));
 	i = 0;
 	j = 0;
-	while (n1[i] == '.' || n1[i] == '_')
+	while (contain_char(n1[i], " @%-_+.,:{}#!$^&*()=<>?;[]~\"\'"))
 		i++;
-	while (n2[j] == '.' || n2[j] == '_')
+	while (contain_char(n2[j], " @%-_+.,:{}#!$^&*()=<>?;[]~\"\'"))
 		j++;
 	while (n1[i] && n1[i] == n2[j])
 	{
 		i++;
 		j++;
-		while (n1[i] == '.' || n1[i] == '_')
+		while (contain_char(n1[i], " @%-_+.,:{}#!$^&*()=<>?;[]~\"\'"))
 			i++;
-		while (n2[j] == '.' || n2[j] == '_')
+		while (contain_char(n2[j], " @%-_+.,:{}#!$^&*()=<>?;[]~\"\'"))
 			j++;
 	}
 	if (n1[i] || n2[j])
@@ -50,11 +50,7 @@ int	is_less_by_name(t_list *l1, t_list *l2)
 	i = 0;
 	while (n1[i] && n1[i] == n2[i])
 		i++;
-	if (n1[i] == '_')
-		return ('/' < n2[i]);
-	else if (n1[i] == '_')
-		return (n1[i] < '/');
-	return (n1[i] < n2[i]);
+	return (ft_tolower(n1[i]) < ft_tolower(n2[i]));
 }
 
 time_t	get_last_modif_date(struct stat statbuf)
