@@ -135,10 +135,7 @@ void	fill_line(t_line *line, t_content *content)
 		readlink(content->path, buff, 199);
 		line->link = ft_strdup(buff);
 	}
-	if (content->quoted_name)
-		line->name = content->quoted_name;
-	else
-		line->name = content->name;
+	line->name = content->name;
 }
 
 void	print_spaces(int n)

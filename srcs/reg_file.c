@@ -35,5 +35,5 @@ void	treat_reg_file(t_args *args, t_stat_list *args_stats)
 	show_list(lst, args->flags, 1);
 	if (lst && args->argc)
 		ft_putchar_fd('\n', 1);
-	ft_lstclear(&lst, free_content);
+	ft_lstclear(&lst, free);
 }

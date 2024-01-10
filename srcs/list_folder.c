@@ -1,6 +1,6 @@
 #include "ft_ls.h"
 
-char	*get_file_path(char *folder_path, struct dirent *dirent)
+char	*get_file_path(char *folder_path, char *name)
 {
 	char	*path;
 	int		folder_path_len;
@@ -8,7 +8,7 @@ char	*get_file_path(char *folder_path, struct dirent *dirent)
 	int		path_len;
 
 	folder_path_len = ft_strlen(folder_path);
-	name_len = ft_strlen(dirent->d_name);
+	name_len = ft_strlen(name);
 	path_len = folder_path_len + name_len + 1;
 	if (folder_path[folder_path_len - 1] != '/')
 		path_len++;
@@ -19,7 +19,7 @@ char	*get_file_path(char *folder_path, struct dirent *dirent)
 		path[folder_path_len] = '/';
 		path[folder_path_len + 1] = 0;
 	}
-	ft_strlcat(path, dirent->d_name, path_len);
+	ft_strlcat(path, name, path_len);
 	return (path);
 }
 
@@ -33,9 +33,27 @@ t_list	*create_content_lst(int flags, struct dirent *dirent, char folder_path[])
 	(void) flags;
 	t_list	*lst = ft_lstnew(malloc(sizeof(t_content)));
 	((t_content *) lst->content)->dirent = dirent;
-	((t_content *) lst->content)->path = get_file_path(folder_path, dirent);
+	((t_content *) lst->content)->path = get_file_path(folder_path, dirent->d_name);
 	((t_content *) lst->content)->name = dirent->d_name;
 	return (lst);
+}
+
+void	check_name(char *name)
+{
+	int j = 0;
+	for (int i = 0; name[i]; i++)
+		if (!ft_isalnum(name[i]))
+			j = 2;
+	(void) j;
+}
+
+void	check_name_list(t_list *lst)
+{
+	while (lst)
+	{
+		check_name(((t_content *) lst->content)->name);
+		lst = lst->next;
+	}
 }
 
 t_list	*fill_list(DIR *dir, int flags, char *folder_path)
@@ -67,7 +85,6 @@ void	call_list_folder_foreach_folder(t_list *lst, int flags)
 		lst = lst->next;
 	}
 }
-
 void	list_folder_content(char folder_name[], int flags, int multiple_args)
 {
 	t_list	*lst;

@@ -45,7 +45,6 @@ typedef struct	s_content
 	struct dirent	*dirent;
 	struct stat		stat_buf;
 	char			*name;
-	char			*quoted_name;
 	char			*path;
 }				t_content;
 typedef struct	s_line
@@ -83,6 +82,7 @@ void	treat_remaining(t_args args, t_stat_list *stats);
 
 // list_folder.c
 void	list_folder_content(char folder_name[], int flags, int multiple_args);
+char	*get_file_path(char *folder_path, char *name);
 
 // sort.c
 void	sort_list(t_list *lst, int flags);

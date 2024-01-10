@@ -63,18 +63,15 @@ void	add_around(char **src, char c)
 void check_quote(void *content)
 {
 	int quote = does_have_quote(((t_content *) content)->name);
-	((t_content *) content)->quoted_name = NULL;
-	if (quote)
-		((t_content *) content)->quoted_name = ((t_content *) content)->name;
 	if (quote == 1)
-		add_around(&((t_content *) content)->quoted_name, '\'');
+		add_around(&((t_content *) content)->name, '\'');
 	if (quote == 2)
-		add_around(&((t_content *) content)->quoted_name, '\"');
+		add_around(&((t_content *) content)->name, '\"');
 }
 
 void	show_list(t_list *lst, int flags, int is_reg)
 {
-	ft_lstiter(lst, check_quote);
+	// ft_lstiter(lst, check_quote);
 	if (flags & LONG)
 		show_long_format(lst, is_reg);
 	else
