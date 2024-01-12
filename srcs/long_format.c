@@ -91,8 +91,16 @@ char	*ft_ultoa(unsigned long n)
 
 void	fill_date(char *date_buff, time_t ts)
 {
-	char *new_buf = ctime(&ts);
-	ft_strlcpy(date_buff, &(new_buf[4]), 13);
+	char	*new_buf = ctime(&ts);
+    time_t	now = time(NULL);
+	if  (now - ts > 15778475)
+	{
+		ft_memcpy(date_buff, &(new_buf[4]), 7);
+		date_buff[7] = ' ';
+		ft_strlcpy(date_buff + 8, &(new_buf[20]), 5);
+	}
+	else
+		ft_strlcpy(date_buff, &(new_buf[4]), 13);
 }
 
 void	fill_size(t_line *line, struct stat stat_buf)

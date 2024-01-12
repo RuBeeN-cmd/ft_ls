@@ -50,28 +50,64 @@ int	does_have_quote(char *name)
 	return (0);
 }
 
-void	add_around(char **src, char c)
+char	*add_around(char **src, char c)
 {
 	int 	len = ft_strlen(*src);
 	char	*dst = malloc(len + 3);
 	dst[0] = c;
 	dst[len + 1] = c;
+	dst[len + 2] = 0;
 	ft_memcpy(dst + 1, *src, len);
-	*src = dst;
+	return (dst);
 }
 
-void check_quote(void *content)
+char	*add_before(char **src, char c)
 {
-	int quote = does_have_quote(((t_content *) content)->name);
-	if (quote == 1)
-		add_around(&((t_content *) content)->name, '\'');
-	if (quote == 2)
-		add_around(&((t_content *) content)->name, '\"');
+	int 	len = ft_strlen(*src);
+	char	*dst = malloc(len + 2);
+	dst[0] = c;
+	dst[len + 1] = 0;
+	ft_memcpy(dst + 1, *src, len);
+	return (dst);
+}
+
+void	change_name(t_list *lst)
+{
+	char	*new;
+
+	while (lst)
+	{
+		int quote = does_have_quote(((t_content *) lst->content)->name);
+		if (quote == 1)
+			new = add_around(&((t_content *) lst->content)->name, '\'');
+		else if (quote == 2)
+			new = add_around(&((t_content *) lst->content)->name, '\"');
+		else
+			new = add_before(&((t_content *) lst->content)->name, ' ');
+		free(((t_content *) lst->content)->name);
+		((t_content *) lst->content)->name = new;
+		lst = lst->next;
+	}
+}
+
+int	need_quote(t_list *lst)
+{
+	int	ret;
+
+	ret = 0;
+	while (lst)
+	{
+		if (does_have_quote(((t_content *) lst->content)->name))
+			ret = 1;
+		lst = lst->next;
+	}
+	return (ret);
 }
 
 void	show_list(t_list *lst, int flags, int is_reg)
 {
-	// ft_lstiter(lst, check_quote);
+	if (need_quote(lst))
+		change_name(lst);
 	if (flags & LONG)
 		show_long_format(lst, is_reg);
 	else

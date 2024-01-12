@@ -89,6 +89,20 @@ void	print_lines(t_list *print, int *column_width)
 	}
 }
 
+int get_nb_empty_last_col(t_list *lst, int nb_col)
+{
+	int	res;
+
+	res = 0;
+	while (lst)
+	{
+		if (res || ft_lstsize(lst->content) < nb_col)
+			res++;
+		lst = lst->next;
+	}
+	return (res);
+}
+
 t_list	*get_with_n_lines(t_list *lst, int width, int nb_line)
 {
 	t_list	*print;
@@ -101,14 +115,24 @@ t_list	*get_with_n_lines(t_list *lst, int width, int nb_line)
 	column_width = ft_calloc(sizeof(int), column_nb);
 	for (int i = 0; i < nb_line && lst; i++)
 	{
+
 		line = get_new_line(lst, nb_line);
 		lst = lst->next;
 		ft_lstadd_back(&print, ft_lstnew(line));
 		update_column_width(column_width, column_nb, line);
+		if ((get_sum_width(column_width, column_nb) + (column_nb - 1) * 2 + 1 > width && column_nb != 1))
+		{
+			ft_lstclear(&print, del_line);
+			free(column_width);
+			return (NULL);
+		}
 	}
-	if ((get_sum_width(column_width, column_nb) + (column_nb - 1) * 2 > width && column_nb != 1)
-	|| (column_nb == 2 && (ft_lstsize(print->next) >= ft_lstsize(print) - 1)))
+	if (get_nb_empty_last_col(print, column_nb) > column_nb)
+	{
 		ft_lstclear(&print, del_line);
+		free(column_width);
+		return (NULL);
+	}
 	if (print)
 		print_lines(print, column_width);
 	free(column_width);
@@ -124,6 +148,8 @@ void	show_column_format(t_list *lst)
 	if (!lst)
 		return ;
 	width = get_win_width();
+	if (width == -1)
+		width = 89;
 	crt_line = 1;
 	while (!(print = get_with_n_lines(lst, width, crt_line)))
 		crt_line++;

@@ -34,26 +34,8 @@ t_list	*create_content_lst(int flags, struct dirent *dirent, char folder_path[])
 	t_list	*lst = ft_lstnew(malloc(sizeof(t_content)));
 	((t_content *) lst->content)->dirent = dirent;
 	((t_content *) lst->content)->path = get_file_path(folder_path, dirent->d_name);
-	((t_content *) lst->content)->name = dirent->d_name;
+	((t_content *) lst->content)->name = ft_strdup(dirent->d_name);
 	return (lst);
-}
-
-void	check_name(char *name)
-{
-	int j = 0;
-	for (int i = 0; name[i]; i++)
-		if (!ft_isalnum(name[i]))
-			j = 2;
-	(void) j;
-}
-
-void	check_name_list(t_list *lst)
-{
-	while (lst)
-	{
-		check_name(((t_content *) lst->content)->name);
-		lst = lst->next;
-	}
 }
 
 t_list	*fill_list(DIR *dir, int flags, char *folder_path)
@@ -76,8 +58,8 @@ void	call_list_folder_foreach_folder(t_list *lst, int flags)
 {
 	while (lst)
 	{
-		if (flags & RECURSIVE && ((t_content *) lst->content)->dirent->d_type == DT_DIR
-			&& !is_dot_folder(((t_content *) lst->content)->dirent->d_name))
+		if (flags & RECURSIVE && ((t_content *) lst->content)->stat_buf.st_mode & S_IFDIR
+			&& !is_dot_folder(((t_content *) lst->content)->name))
 		{
 			ft_putchar_fd('\n', 1);
 			list_folder_content(((t_content *) lst->content)->path, flags, 1);
