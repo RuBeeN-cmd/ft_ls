@@ -13,6 +13,7 @@ void	free_line(t_line line)
 		free(line.major);
 	if (line.minor)
 		free(line.minor);
+	free(line.name);
 }
 
 char	get_file_type(mode_t mode)
@@ -116,7 +117,8 @@ void	fill_size(t_line *line, struct stat stat_buf)
 	else
 		line->size = ft_ultoa(stat_buf.st_size);
 }
-void	fill_line(t_line *line, t_content *content)
+
+void	fill_line(t_line *line, t_content *content, int add_quote)
 {
 	line->type = get_file_type(content->stat_buf.st_mode);
 	fill_perm(line->perm, content->stat_buf.st_mode);
@@ -143,7 +145,10 @@ void	fill_line(t_line *line, t_content *content)
 		readlink(content->path, buff, 199);
 		line->link = ft_strdup(buff);
 	}
-	line->name = content->name;
+	if (add_quote)
+		line->name = change_name(content->name);
+	else
+		line->name = ft_strdup(content->name);
 }
 
 void	print_spaces(int n)
@@ -188,6 +193,7 @@ void	print_line(t_line line, unsigned int *len)
 
 void	show_long_format(t_list *lst, int is_reg)
 {
+	int	add_quote = need_quote(lst);
 	int len = ft_lstsize(lst);
 	t_line	*lines = malloc(sizeof(t_line) * len);
 	int i = 0;
@@ -198,7 +204,7 @@ void	show_long_format(t_list *lst, int is_reg)
 	while (tmp)
 	{
 		total_size += 512 * ((t_content *) tmp->content)->stat_buf.st_blocks / 1024; 
-		fill_line(&(lines[i]), (t_content *) tmp->content);
+		fill_line(&(lines[i]), (t_content *) tmp->content, add_quote);
 		if (ft_strlen(lines[i].nb_links) > max_len[0])
 			max_len[0] = ft_strlen(lines[i].nb_links);
 		if (ft_strlen(lines[i].owner_usr) > max_len[1])

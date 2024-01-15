@@ -98,4 +98,8 @@ void	show_column_format(t_list *lst);
 void	show_long_format(t_list *lst, int is_reg);
 void	print_spaces(int n);
 
+// quotes.c
+int		need_quote(t_list *lst);
+char	*change_name(char *name);
+
 #endif

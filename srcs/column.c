@@ -25,16 +25,21 @@ int	get_max_len(int *max_len, int size, int i)
 	return (max_len[i]);
 }
 
-t_list	*get_new_line(t_list *lst, int nb_line)
+t_list	*get_new_line(t_list *lst, int nb_line, int add_quote)
 {
 	t_list	*line;
 	t_list	*crt_file;
+	char	*name;
 
 	line = NULL;
 	crt_file = lst;
 	while (crt_file)
 	{
-		ft_lstadd_back(&line, ft_lstnew(((t_content *) crt_file->content)->name));
+		if (add_quote)
+			name = change_name(((t_content *) crt_file->content)->name);
+		else
+			name = ft_strdup(((t_content *) crt_file->content)->name);
+		ft_lstadd_back(&line, ft_lstnew(name));
 		crt_file = get_next_file(crt_file, nb_line);
 	}
 	return (line);
@@ -42,7 +47,7 @@ t_list	*get_new_line(t_list *lst, int nb_line)
 
 void	del_line(void *line)
 {
-	ft_lstclear((t_list **) &line, NULL);
+	ft_lstclear((t_list **) &line, free);
 }
 
 void	update_column_width(int *column_width, int width_size, t_list *line)
@@ -103,7 +108,7 @@ int get_nb_empty_last_col(t_list *lst, int nb_col)
 	return (res);
 }
 
-t_list	*get_with_n_lines(t_list *lst, int width, int nb_line)
+t_list	*get_with_n_lines(t_list *lst, int width, int nb_line, int add_quote)
 {
 	t_list	*print;
 	int		*column_width;
@@ -116,7 +121,7 @@ t_list	*get_with_n_lines(t_list *lst, int width, int nb_line)
 	for (int i = 0; i < nb_line && lst; i++)
 	{
 
-		line = get_new_line(lst, nb_line);
+		line = get_new_line(lst, nb_line, add_quote);
 		lst = lst->next;
 		ft_lstadd_back(&print, ft_lstnew(line));
 		update_column_width(column_width, column_nb, line);
@@ -144,14 +149,14 @@ void	show_column_format(t_list *lst)
 	int		width;
 	t_list	*print;
 	int		crt_line;
+	int		add_quote;
 
 	if (!lst)
 		return ;
 	width = get_win_width();
-	if (width == -1)
-		width = 89;
 	crt_line = 1;
-	while (!(print = get_with_n_lines(lst, width, crt_line)))
+	add_quote = need_quote(lst);
+	while (!(print = get_with_n_lines(lst, width, crt_line, add_quote)))
 		crt_line++;
 	ft_lstclear(&print, del_line);
 }

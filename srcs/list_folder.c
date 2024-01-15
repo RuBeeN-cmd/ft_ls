@@ -58,7 +58,7 @@ void	call_list_folder_foreach_folder(t_list *lst, int flags)
 {
 	while (lst)
 	{
-		if (flags & RECURSIVE && ((t_content *) lst->content)->stat_buf.st_mode & S_IFDIR
+		if (flags & RECURSIVE && S_ISDIR(((t_content *) lst->content)->stat_buf.st_mode)
 			&& !is_dot_folder(((t_content *) lst->content)->name))
 		{
 			ft_putchar_fd('\n', 1);
