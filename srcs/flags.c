@@ -27,7 +27,8 @@ int	get_flags(char flags_str[])
 			flags |= REVERSE;
 		else if (flags_str[i] == 't')
 			flags |= TIME;
-		invalid_option(flags_str[i]);
+		else
+			invalid_option(flags_str[i]);
 	}
 	return (flags);
 }
