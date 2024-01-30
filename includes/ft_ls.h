@@ -63,12 +63,12 @@ typedef struct	s_line
 }				t_line;
 
 // args.c
-void		parse_args(t_args *args, int argc, char *argv[]);
-t_stat_list	*get_args_stats(t_args *args);
-void		del_stat_lst(t_stat_list *lst);
+t_args	parse_args(int argc, char *argv[]);
+int		get_args_stats(t_args *args, t_stat_list **stats);
+void	del_stat_lst(t_stat_list *lst);
 
 // flags.c
-void	parse_flags(t_args *args, int argc, char *argv[]);
+int		parse_flags(int *argc, char *argv[]);
 
 // content.c
 t_content	*init_content(struct stat stat_buf, char *name);
@@ -78,10 +78,10 @@ void		free_content(void *content);
 void	treat_reg_file(t_args *args, t_stat_list *args_stats);
 
 // remaining.c
-void	treat_remaining(t_args args, t_stat_list *stats);
+int	treat_remaining(t_args args, t_stat_list *stats);
 
 // list_folder.c
-void	list_folder_content(char folder_name[], int flags, int multiple_args);
+int		list_folder_content(char folder_name[], int flags, int multiple_args);
 char	*get_file_path(char *folder_path, char *name);
 
 // sort.c

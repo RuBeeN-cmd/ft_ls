@@ -48,42 +48,51 @@ t_list	*fill_list(DIR *dir, int flags, char *folder_path)
 	if (dirent->d_name[0] == '.' && !(flags & ALL))
 		return (fill_list(dir, flags, folder_path));
 	lst = create_content_lst(flags, dirent, folder_path);
-	if (flags & (LONG | TIME))
-		lstat(((t_content *) lst->content)->path, &(((t_content *) lst->content)->stat_buf));
+	lstat(((t_content *) lst->content)->path, &(((t_content *) lst->content)->stat_buf));
 	lst->next = fill_list(dir, flags, folder_path);
 	return (lst);
 }
 
-void	call_list_folder_foreach_folder(t_list *lst, int flags)
+int	call_list_folder_foreach_folder(t_list *lst, int flags)
 {
+	int	ret;
+
+	ret = 0;
 	while (lst)
 	{
 		if (flags & RECURSIVE && S_ISDIR(((t_content *) lst->content)->stat_buf.st_mode)
 			&& !is_dot_folder(((t_content *) lst->content)->name))
 		{
 			ft_putchar_fd('\n', 1);
-			list_folder_content(((t_content *) lst->content)->path, flags, 1);
+			if (list_folder_content(((t_content *) lst->content)->path, flags, 1))
+				ret = 1;
 		}
 		lst = lst->next;
 	}
+	return (ret);
 }
-void	list_folder_content(char folder_name[], int flags, int multiple_args)
+
+int	list_folder_content(char folder_name[], int flags, int multiple_args)
 {
 	t_list	*lst;
 	DIR		*dir;
-	if ((dir = opendir(folder_name)))
+	int		ret;
+
+	ret = 0;
+	if (!(dir = opendir(folder_name)))
 	{
-		lst = fill_list(dir, flags, folder_name);
-		sort_list(lst, flags);
-		if (multiple_args || flags & RECURSIVE)
-			ft_printf("%s:\n", folder_name);
-		show_list(lst, flags, 0);
-		if (flags & RECURSIVE)
-			call_list_folder_foreach_folder(lst, flags);
-		ft_lstclear(&lst, free_content);
-		if (closedir(dir) == -1)
-			ft_printf("Closedir error\n");
-	}
-	else
 		ft_printf("ls: cannot open directory '%s': Permission denied\n", folder_name);
+		return (2);
+	}
+	lst = fill_list(dir, flags, folder_name);
+	sort_list(lst, flags);
+	if (multiple_args || flags & RECURSIVE)
+		ft_printf("%s:\n", folder_name);
+	show_list(lst, flags, 0);
+	if (flags & RECURSIVE)
+		ret = call_list_folder_foreach_folder(lst, flags);
+	ft_lstclear(&lst, free_content);
+	if (closedir(dir) == -1)
+		ft_printf("Closedir error\n");
+	return (ret);
 }

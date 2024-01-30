@@ -27,24 +27,26 @@ int	get_flags(char flags_str[])
 			flags |= REVERSE;
 		else if (flags_str[i] == 't')
 			flags |= TIME;
-		else
-			invalid_option(flags_str[i]);
+		invalid_option(flags_str[i]);
 	}
 	return (flags);
 }
 
-void	parse_flags(t_args *args, int argc, char *argv[])
+int	parse_flags(int *argc, char *argv[])
 {
-	for (int i = 0; i < argc; i++)
+	int	flags = 0;
+
+	for (int i = 0; i < *argc; i++)
 	{
 		if (argv[i][0] == '-' && argv[i][1])
 		{
 			if (argv[i][1] == '-' && argv[i][2])
 				unrecognized_option(argv[i]);
 			else if (argv[i][1] != '-')
-				args->flags |= get_flags(argv[i] + 1);
+				flags |= get_flags(argv[i] + 1);
 			argv[i] = NULL;
-			args->argc--;
+			(*argc)--;
 		}
 	}
+	return (flags);
 }

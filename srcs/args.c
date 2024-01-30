@@ -1,23 +1,15 @@
 #include "ft_ls.h"
 
-t_args	init_args(int argc, char *argv[])
+t_args	parse_args(int argc, char *argv[])
 {
 	t_args	args;
 
-	args.flags = 0;
-	args.show_title = 0;
+	args.flags = parse_flags(&argc, argv);
+	args.show_title = argc > 1;
 	args.argc = argc;
 	args.argv = argv;
 	args.stats = NULL;
 	return (args);
-}
-
-void	parse_args(t_args *args, int argc, char *argv[])
-{
-	*args = init_args(argc, argv);
-	parse_flags(args, argc, argv);
-	if (args->argc > 1)
-		args->show_title = 1;
 }
 
 void	stat_lstadd_back(t_stat_list **lst, struct stat value)
@@ -52,13 +44,14 @@ void	del_stat_lst(t_stat_list *lst)
 	free(lst);
 }
 
-t_stat_list	*get_args_stats(t_args *args)
+int	get_args_stats(t_args *args, t_stat_list **stats)
 {
-	t_stat_list	*stats;
 	struct stat	stat_buf;
 	int			new_argc;
+	int			ret;
 
-	stats = NULL;
+	ret = 0;
+	*stats = NULL;
 	new_argc = args->argc;
 	for (int i = 0, j = 0; i < args->argc; j++)
 	{
@@ -66,10 +59,14 @@ t_stat_list	*get_args_stats(t_args *args)
 		{
 			if ((args->flags & LONG && lstat(args->argv[j], &stat_buf) != -1)
 				|| stat(args->argv[j], &stat_buf) != -1)
-				stat_lstadd_back(&stats, stat_buf);
+				stat_lstadd_back(stats, stat_buf);
 			else
 			{
-				ft_printf("ls: cannot access '%s': No such file or directory\n", args->argv[j]);
+				char	quote = '\'';
+				if (ft_strchr(args->argv[j], '\''))
+					quote = '\"';
+				ft_printf("ls: cannot access %c%s%c: %s\n", quote, args->argv[j], quote, strerror(errno));
+				ret = 2;
 				new_argc--;
 				args->argv[j] = NULL;
 			}
@@ -77,5 +74,5 @@ t_stat_list	*get_args_stats(t_args *args)
 		}
 	}
 	args->argc = new_argc;
-	return (stats);
+	return (ret);
 }
