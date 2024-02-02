@@ -61,10 +61,11 @@ char	get_file_type(mode_t mode)
 	mode & (1 << 6)
 	mode & (1 << 7)
 	mode & (1 << 8)
-	mode & (1 << 9)
-	mode & (1 << 10)
-	mode & (1 << 11)
+	mode & (1 << 9) -> i = 8 <=> i / 3 = 2 <=> 3 - 1 - i / 3 = 0 <=> 9 + 3 - 1 - i / 3 = 9
+	mode & (1 << 10) -> i = 5 <=> i / 3 = 1 <=> 3 - 1 - i / 3 = 1 <=> 9 + 3 - 1 - i / 3 = 9
+	mode & (1 << 11) -> i = 2 <=> i / 3 = 0 <=> 3 - 1 - i / 3 = 2  <=> 9 + 3 - 1 - i / 3 = 9
 
+	
 */
 
 void	fill_perm(char *perm_buff, mode_t mode)
@@ -78,19 +79,19 @@ void	fill_perm(char *perm_buff, mode_t mode)
 				perm_buff[i] = 'r';
 			else if (i % 3 == 1)
 				perm_buff[i] = 'w';
-			else if (!(mode & (1 << (9 + (i / 3)))))
+			else if (!(mode & (1 << (11 - (i / 3)))))
 				perm_buff[i] = 'x';
 			else if (i / 3 == 0 || i / 3 == 1)
 				perm_buff[i] = 's';
 			else
 				perm_buff[i] = 't';
 		}
-		else if ((i / 3 == 0 || i / 3 == 1) && i % 3 == 2)
-			perm_buff[i] = 'S';
-		else if (i / 3 == 2 && i % 3 == 2)
-			perm_buff[i] = 'T';
-		else 
+		else if (i % 3 == 0 || i % 3 == 1 || !(mode & (1 << (11 - (i / 3)))))
 			perm_buff[i] = '-';
+		else if (i / 3 == 0 || i / 3 == 1)
+			perm_buff[i] = 'S';
+		else
+			perm_buff[i] = 'T';
 	}
 }
 
