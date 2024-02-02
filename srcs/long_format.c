@@ -35,38 +35,6 @@ char	get_file_type(mode_t mode)
 		return ('s');
 	return ('?');
 }
-/*
-	S_ISUID    000100000000000     bit Set-UID
-	S_ISGID    000010000000000     bit Set-Gid (voir ci‐dessous)
-	S_ISVTX    000001000000000     bit « sticky » (voir ci‐dessous)
-
-	S_IRUSR    000000100000000     le propriétaire a le droit de lecture
-	S_IWUSR    000000010000000     le propriétaire a le droit d'écriture
-	S_IXUSR    000000001000000     le propriétaire a le droit d'exécution
-	S_IRGRP    000000000100000     le groupe a le droit de lecture
-	S_IWGRP    000000000010000     le groupe a le droit d'écriture
-	S_IXGRP    000000000001000     le groupe a le droit d'exécution
-	S_IROTH    000000000000100     les autres ont le droit de lecture
-	S_IWOTH    000000000000010     les autres ont le droit d'écriture
-	S_IXOTH    000000000000001     les autres ont le droit d'exécution
-
-	perm[0] = 
-
-	mode & (1 << 0)
-	mode & (1 << 1)
-	mode & (1 << 2)
-	mode & (1 << 3)
-	mode & (1 << 4)
-	mode & (1 << 5)
-	mode & (1 << 6)
-	mode & (1 << 7)
-	mode & (1 << 8)
-	mode & (1 << 9) -> i = 8 <=> i / 3 = 2 <=> 3 - 1 - i / 3 = 0 <=> 9 + 3 - 1 - i / 3 = 9
-	mode & (1 << 10) -> i = 5 <=> i / 3 = 1 <=> 3 - 1 - i / 3 = 1 <=> 9 + 3 - 1 - i / 3 = 9
-	mode & (1 << 11) -> i = 2 <=> i / 3 = 0 <=> 3 - 1 - i / 3 = 2  <=> 9 + 3 - 1 - i / 3 = 9
-
-	
-*/
 
 void	fill_perm(char *perm_buff, mode_t mode)
 {
