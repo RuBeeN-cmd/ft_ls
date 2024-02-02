@@ -99,6 +99,7 @@ void	show_long_format(t_list *lst, int is_reg);
 void	print_spaces(int n);
 
 // quotes.c
+int		does_have_quote(char *name);
 int		need_quote(t_list *lst);
 char	*change_name(char *name);
 

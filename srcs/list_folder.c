@@ -87,7 +87,16 @@ int	list_folder_content(char folder_name[], int flags, int multiple_args)
 	lst = fill_list(dir, flags, folder_name);
 	sort_list(lst, flags);
 	if (multiple_args || flags & RECURSIVE)
-		ft_printf("%s:\n", folder_name);
+	{
+		if (does_have_quote(folder_name))
+		{
+			char *name = change_name(folder_name);
+			ft_printf("%s:\n", name);
+			free(name);
+		}
+		else
+			ft_printf("%s:\n", folder_name);
+	}
 	show_list(lst, flags, 0);
 	if (flags & RECURSIVE)
 		ret = call_list_folder_foreach_folder(lst, flags);
