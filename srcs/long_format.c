@@ -85,12 +85,12 @@ void	fill_perm(char *perm_buff, mode_t mode)
 			else
 				perm_buff[i] = 't';
 		}
-		else if (!(mode & (1 << (9 + (i / 3)))))
-			perm_buff[i] = '-';
-		else if (i / 3 == 0 || i / 3 == 1)
+		else if ((i / 3 == 0 || i / 3 == 1) && i % 3 == 2)
 			perm_buff[i] = 'S';
-		else
+		else if (i / 3 == 2 && i % 3 == 2)
 			perm_buff[i] = 'T';
+		else 
+			perm_buff[i] = '-';
 	}
 }
 
