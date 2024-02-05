@@ -18,7 +18,6 @@ void	free_line(t_line line)
 
 char	get_file_type(mode_t mode)
 {
-	// Remaining : 'C', 'D', 'M', 'n', 'P', 'S', 'm'
 	if (S_ISREG(mode))
 		return ('-');
 	else if (S_ISDIR(mode))
