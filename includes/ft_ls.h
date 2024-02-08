@@ -14,10 +14,7 @@
 #include <grp.h>
 #include <sys/ioctl.h>
 
-#define MINORBITS        8
-#define MINORMASK        ((1U << MINORBITS) - 1)
-#define MAJOR(dev)        ((unsigned int) ((dev) >> MINORBITS))
-#define MINOR(dev)        ((unsigned int) ((dev) & MINORMASK))
+#include <sys/sysmacros.h>
 
 #define	LONG		1 << 0
 #define	RECURSIVE	1 << 1
@@ -44,6 +41,7 @@ typedef struct	s_content
 {
 	struct dirent	*dirent;
 	struct stat		stat_buf;
+	int				stat_ret;
 	char			*name;
 	char			*path;
 }				t_content;

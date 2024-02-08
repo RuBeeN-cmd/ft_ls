@@ -28,9 +28,8 @@ int	is_dot_folder(char name[])
 	return (!ft_strncmp(name, ".", 2) || !ft_strncmp(name, "..", 3));
 }
 
-t_list	*create_content_lst(int flags, struct dirent *dirent, char folder_path[])
+t_list	*create_content_lst(struct dirent *dirent, char folder_path[])
 {
-	(void) flags;
 	t_list	*lst = ft_lstnew(malloc(sizeof(t_content)));
 	((t_content *) lst->content)->dirent = dirent;
 	((t_content *) lst->content)->path = get_file_path(folder_path, dirent->d_name);
@@ -38,19 +37,35 @@ t_list	*create_content_lst(int flags, struct dirent *dirent, char folder_path[])
 	return (lst);
 }
 
-t_list	*fill_list(DIR *dir, int flags, char *folder_path)
+int	fill_list(DIR *dir, int flags, char *folder_path, t_list **lst)
 {
-	t_list			*lst;
 	struct dirent	*dirent;
+	int				ret = 0;
 
 	if (!(dirent = readdir(dir)))
-		return (NULL);
+	{
+		*lst = NULL;
+		return (0);
+	}
 	if (dirent->d_name[0] == '.' && !(flags & ALL))
-		return (fill_list(dir, flags, folder_path));
-	lst = create_content_lst(flags, dirent, folder_path);
-	lstat(((t_content *) lst->content)->path, &(((t_content *) lst->content)->stat_buf));
-	lst->next = fill_list(dir, flags, folder_path);
-	return (lst);
+		return (fill_list(dir, flags, folder_path, lst));
+	*lst = create_content_lst(dirent, folder_path);
+	ft_bzero(&(((t_content *) (*lst)->content)->stat_buf), sizeof(struct stat));
+	((t_content *) (*lst)->content)->stat_ret = lstat(((t_content *) (*lst)->content)->path, &(((t_content *) (*lst)->content)->stat_buf));
+	if (((t_content *) (*lst)->content)->stat_ret == -1)
+	{
+		int quotes = does_have_quote(((t_content *) (*lst)->content)->path);
+		if (quotes != 2)
+			ft_printf("ls: cannot access '%s': Permission denied\n", ((t_content *) (*lst)->content)->path);
+		else
+			ft_printf("ls: cannot access \"%s\": Permission denied\n", ((t_content *) (*lst)->content)->path);
+		ret = 1;
+	}
+	if (fill_list(dir, flags, folder_path, &((*lst)->next)))
+		return (1);
+	if (((t_content *) (*lst)->content)->stat_ret == -1)
+		return (1);
+	return (ret);
 }
 
 int	call_list_folder_foreach_folder(t_list *lst, int flags)
@@ -84,7 +99,8 @@ int	list_folder_content(char folder_name[], int flags, int multiple_args)
 		ft_printf("ls: cannot open directory '%s': Permission denied\n", folder_name);
 		return (2);
 	}
-	lst = fill_list(dir, flags, folder_name);
+	if (fill_list(dir, flags, folder_name, &lst))
+		ret = 1;
 	sort_list(lst, flags);
 	if (multiple_args || flags & RECURSIVE)
 	{

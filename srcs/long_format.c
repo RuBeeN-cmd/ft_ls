@@ -101,7 +101,7 @@ void	fill_date(char *date_buff, time_t ts)
 {
 	char	*new_buf = ctime(&ts);
     time_t	now = time(NULL);
-	if  (now - ts > 15778475)
+	if  (now - ts > 15778475 || now - ts < 0)
 	{
 		ft_memcpy(date_buff, &(new_buf[4]), 7);
 		date_buff[7] = ' ';
@@ -116,10 +116,10 @@ void	fill_size(t_line *line, struct stat stat_buf)
 	line->size = NULL;
 	line->major = NULL;
 	line->minor = NULL;
-	if (S_ISCHR(stat_buf.st_mode))
+	if (S_ISCHR(stat_buf.st_mode) || S_ISBLK(stat_buf.st_mode))
 	{
-		line->major = ft_ultoa(MAJOR(stat_buf.st_rdev));
-		line->minor = ft_ultoa(MINOR(stat_buf.st_rdev));
+		line->major = ft_ultoa(major(stat_buf.st_rdev));
+		line->minor = ft_ultoa(minor(stat_buf.st_rdev));
 	}
 	else
 		line->size = ft_ultoa(stat_buf.st_size);
@@ -127,30 +127,51 @@ void	fill_size(t_line *line, struct stat stat_buf)
 
 void	fill_line(t_line *line, t_content *content, int add_quote)
 {
-	line->type = get_file_type(content->stat_buf.st_mode);
-	fill_perm(line->perm, content->stat_buf.st_mode);
-	line->nb_links = ft_itoa(content->stat_buf.st_nlink);
-	struct passwd	*pwuid;
-	pwuid = getpwuid(content->stat_buf.st_uid);
-	if (!pwuid)
-		line->owner_usr = ft_itoa(content->stat_buf.st_uid);
-	else
-		line->owner_usr = ft_strdup(pwuid->pw_name);
-	struct group	*grgid;
-	grgid = getgrgid(content->stat_buf.st_gid);
-	if (!grgid)
-		line->owner_group = ft_itoa(content->stat_buf.st_gid);
-	else
-		line->owner_group = ft_strdup(grgid->gr_name);
-	fill_size(line, content->stat_buf);
-	fill_date(line->date, content->stat_buf.st_mtime);
-	line->link = NULL;
-	if (S_ISLNK(content->stat_buf.st_mode))
+	line->type = 0;
+	if (!ft_strncmp(content->name, ".", 2)
+	|| !ft_strncmp(content->name, "..", 3))
+		line->type = 'd';
+	if (content->stat_ret == -1)
 	{
-		char	buff[200];
-		ft_bzero(buff, 200);
-		readlink(content->path, buff, 199);
-		line->link = ft_strdup(buff);
+		if (!line->type)
+			line->type = '?';
+		ft_strlcpy(line->perm, "?????????", 10);
+		line->nb_links = ft_strdup("?");
+		line->owner_usr = ft_strdup("?");
+		line->owner_group = ft_strdup("?");
+		line->size = ft_strdup("?");
+		ft_strlcpy(line->date, "           ?", 13);
+		line->link = 0;
+		line->major = NULL;
+		line->minor = NULL;
+	}
+	else
+	{
+		line->type = get_file_type(content->stat_buf.st_mode);
+		fill_perm(line->perm, content->stat_buf.st_mode);
+		line->nb_links = ft_itoa(content->stat_buf.st_nlink);
+		struct passwd	*pwuid;
+		pwuid = getpwuid(content->stat_buf.st_uid);
+		if (!pwuid)
+			line->owner_usr = ft_itoa(content->stat_buf.st_uid);
+		else
+			line->owner_usr = ft_strdup(pwuid->pw_name);
+		struct group	*grgid;
+		grgid = getgrgid(content->stat_buf.st_gid);
+		if (!grgid)
+			line->owner_group = ft_itoa(content->stat_buf.st_gid);
+		else
+			line->owner_group = ft_strdup(grgid->gr_name);
+		fill_size(line, content->stat_buf);
+		fill_date(line->date, content->stat_buf.st_mtime);
+		line->link = NULL;
+		if (S_ISLNK(content->stat_buf.st_mode))
+		{
+			char	buff[200];
+			ft_bzero(buff, 200);
+			readlink(content->path, buff, 199);
+			line->link = ft_strdup(buff);
+		}
 	}
 	if (add_quote)
 		line->name = change_name(content->name);

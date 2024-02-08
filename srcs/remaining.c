@@ -21,6 +21,7 @@ int	treat_remaining(t_args args, t_stat_list *stats)
 	t_list	*lst;
 	t_list	*tmp;
 	int		ret;
+	int		tmp_ret;
 
 	lst = get_remaining_lst(args, stats);
 	sort_list(lst, args.flags);
@@ -28,7 +29,9 @@ int	treat_remaining(t_args args, t_stat_list *stats)
 	ret = 0;
 	while (tmp)
 	{
-		ret |= list_folder_content(((t_content *) tmp->content)->name, args.flags, args.show_title);
+		tmp_ret = list_folder_content(((t_content *) tmp->content)->name, args.flags, args.show_title);
+		if (tmp_ret > ret)
+			ret = tmp_ret;
 		tmp = tmp->next;
 		if (tmp && args.show_title)
 			ft_putchar_fd('\n', 1);

@@ -36,8 +36,9 @@ int	get_flags(char flags_str[])
 int	parse_flags(int *argc, char *argv[])
 {
 	int	flags = 0;
+	int	arg_len = *argc;
 
-	for (int i = 0; i < *argc; i++)
+	for (int i = 0; i < arg_len; i++)
 	{
 		if (argv[i][0] == '-' && argv[i][1])
 		{
